@@ -423,6 +423,379 @@ paths:
                     type: string
                     example: Invalid or expired token
 
+  /api/v1/invites:
+    get: 
+      tags: 
+        - Invites
+      summary: Fetch all invites sent by current user
+      operationId: getAllInvites
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Retrieved successfully'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Invites'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags: 
+        - Invites
+      summary: Send an invite to a user
+      operationId: sendInvites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required:
+                - email
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                    status_code: 
+                      type: integer
+                      example: 201
+                    message:
+                      type: string
+                      example: 'invite sent successfully'
+                    data: 
+                      $ref: '#/components/schemas/Invites'
+        '400': 
+          $ref: '#/components/responses/ClientError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+  
+  /api/v1/invites/{inviteId}: 
+    parameters:
+      - name: inviteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c 
+    get:
+      tags: 
+        - Invites
+      summary: Fetch single invite
+      operationId: fetchSingleInvite
+      responses:
+        '200': 
+          description: Success reponse
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Invite retrieved successfully
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+                      email:
+                        type: string
+                        example: 'invitee@email.com'
+                      status:
+                        type: string
+                        enum: 
+                          - pending
+                          - decline
+                          - accept
+                          - canceled
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: '2024-07-13T15:30:00Z'
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: '2024-07-13T15:30:00Z'
+        '400': 
+          $ref: '#/components/responses/ClientError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags: 
+        - Invites
+      summary: Cancel an invite
+      operationId: cancelSingleInvite
+      responses:
+        '200': 
+          description: Deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Invite canceled
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+  
+  /api/v1/invites/{inviteId}/accept:
+    parameters:
+      - name: inviteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+    post: 
+      tags: 
+        - Invites
+      summary: Accept an invite
+      operationId: acceptSingleInvite
+      responses: 
+        '200':
+          description: Invite accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Invite accepted
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /api/v1/invites/{inviteId}/reject:
+    parameters:
+      - name: inviteId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+    post: 
+      tags: 
+        - Invites
+      summary: Reject an invite
+      operationId: rejectSingleInvite
+      responses: 
+        '200':
+          description: Invite rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Invite rejected
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+  
+  /api/v1/transactions:
+    get:
+      tags: 
+        - Transactions
+      summary: Fetch all transactions
+      operationId: getAllTransactions
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transactions'
+    post:
+      tags: 
+        - Transactions
+      summary: Add new transaction
+      operationId: Add to transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - failed
+                    - success
+                currency:
+                  type: string
+                  enum: 
+                    - USD 
+                    - EUR
+                    - NGN
+                amount:
+                  type: integer
+              required:
+                - currency
+                - amount
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Transactions'
+        '400': 
+          $ref: '#/components/responses/ClientError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+  
+  /api/v1/transactions/{transactionId}:
+    parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+    get:
+      tags: 
+        - Transactions
+      summary: Fetch single tranaction
+      operationId: fetchSingleTransaction
+      responses:
+        '200': 
+          description: Success reponse
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Transaction retrieved successfully
+                  data:
+                    $ref: '#/components/schemas/Transactions'
+        '400': 
+          $ref: '#/components/responses/ClientError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+    put:
+      tags: 
+        - Transactions
+      summary: Update a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - failed
+                    - success
+                currency:
+                  type: string
+                  enum: 
+                    - USD 
+                    - EUR
+                    - NGN
+                amount:
+                  type: integer
+              required:
+                - currency
+                - amount
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                    status_code: 
+                      type: integer
+                      example: 200
+                    message:
+                      type: string
+                      example: 'Transactions updated'
+                    data:
+                      $ref: '#/components/schemas/Transactions'
+        '400': 
+          $ref: '#/components/responses/ClientError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags: 
+        - Transactions
+      summary: Delete single transaction
+      operationId: removeTransaction
+      responses:
+        '200': 
+          description: Transaction deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Transaction deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500': 
+          $ref: '#/components/responses/ServerError'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -457,3 +830,119 @@ components:
           type: string
           format: date-time
           example: 2023-07-12T07:20:50.52Z
+    Invites:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: 'Retrieved successfully'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+                id:
+                  type: string
+                  format: uuid
+                  example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+                email:
+                  type: string
+                  example: invitee@email.com
+                status:
+                  type: string
+                  enum: 
+                    - pending
+                    - decline
+                    - accept
+                    - canceled
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: 2024-07-13T15:30:00Z
+                updatedAt:
+                  type: string
+                  format: date-time
+                  example: '2024-07-13T15:30:00Z'
+    Transactions:
+      type: object
+      properties:
+          status_code: 
+            type: integer
+            example: 201
+          message:
+            type: string
+            example: 'Transactions added'
+          data:
+            type: object
+            properties:
+                id:
+                  type: string
+                  format: uuid
+                  example: c0f0a3c2-2f8d-4d83-b302-e3b8e1d5a01c
+                amount:
+                  type: integer
+                  example: 1234.5
+                currency:
+                  type: string
+                  enum: 
+                    - USD
+                    - EUR
+                    - NGN
+                status:
+                  type: string
+                  enum: 
+                    - pending
+                    - failed
+                    - success
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: 2024-07-13T15:30:00Z
+                updatedAt:
+                  type: string
+                  format: date-time
+                  example: '2024-07-13T15:30:00Z'
+  responses:
+    ServerError:
+      description: Server error occurred
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status_code:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: Internal Server Error
+    ClientError:
+      description: Client error occurred
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status_code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: Bad Request
+    NotFoundError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status_code:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: Resource not found
+
