@@ -1,5 +1,19 @@
 # [App Name] Integration Documentation
 
+### Database Schema URL:
+[DEMO LINKGIT ](https://www.dbdiagram.io/d/Team-breeze-HNG-6691ac1c9939893daece782d)
+
+### Contributors
+- @khingz
+- @alphacodez
+- @McCoy
+_ @officiabreezy
+_ @johnkrator
+
+### API Design
+
+[DEMO LINK](https://breeze-docs.onrender.com/api-docs/)
+
 ## Overview
 
 [Description]
