@@ -4,12 +4,12 @@ info:
   description: API for user authentication and registration using email/password, magic links, and social authentication.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000/v1
+  - url: http://localhost:3000/
 tags:
   - name: Auth
     description: Authentication and Registration
 paths:
-  /auth/register:
+  /api/v1/auth/register:
     post:
       tags:
         - Auth
@@ -72,7 +72,7 @@ paths:
                     type: string
                     example: Invalid input
 
-  /auth/login:
+  /api/v1/auth/login:
     post:
       tags:
         - Auth
@@ -126,7 +126,7 @@ paths:
                     type: string
                     example: Invalid credentials
 
-  /auth/magic-link:
+  /api/v1/auth/magic-link:
     post:
       tags:
         - Auth
@@ -173,7 +173,7 @@ paths:
                     type: string
                     example: Invalid input
 
-  /auth/magic-link/verify:
+  /api/v1/auth/magic-link/verify:
     get:
       tags:
         - Auth
@@ -232,7 +232,7 @@ paths:
                     type: string
                     example: Token expired or invalid
 
-  /auth/social:
+  /api/v1/auth/social:
     post:
       tags:
         - Auth
@@ -313,7 +313,7 @@ paths:
                     type: string
                     example: Invalid access token
 
-  /auth/password-reset:
+  /api/v1/auth/password-reset:
     post:
       tags:
         - Auth
@@ -360,7 +360,7 @@ paths:
                     type: string
                     example: Invalid input
 
-  /auth/password-reset/confirm:
+  /api/v1/auth/password-reset/confirm:
     post:
       tags:
         - Auth
@@ -429,6 +429,8 @@ paths:
         - Invites
       summary: Fetch all invites sent by current user
       operationId: getAllInvites
+      security:
+        - bearerAuth: []
       responses: 
         '200': 
           description: Successful response
@@ -487,7 +489,9 @@ paths:
         '500': 
           $ref: '#/components/responses/ServerError'
   
-  /api/v1/invites/{inviteId}: 
+  /api/v1/invites/{inviteId}:
+    security:
+        - bearerAuth: []
     parameters:
       - name: inviteId
         in: path
@@ -571,6 +575,8 @@ paths:
           $ref: '#/components/responses/ServerError'
   
   /api/v1/invites/{inviteId}/accept:
+    security:
+        - bearerAuth: []
     parameters:
       - name: inviteId
         in: path
@@ -615,6 +621,8 @@ paths:
         - Invites
       summary: Reject an invite
       operationId: rejectSingleInvite
+      security:
+        - bearerAuth: []
       responses: 
         '200':
           description: Invite rejected
@@ -638,6 +646,8 @@ paths:
         - Transactions
       summary: Fetch all transactions
       operationId: getAllTransactions
+      security:
+        - bearerAuth: []
       responses:
         '200': 
           description: Successful response
@@ -700,6 +710,8 @@ paths:
         - Transactions
       summary: Fetch single tranaction
       operationId: fetchSingleTransaction
+      security:
+        - bearerAuth: []
       responses:
         '200': 
           description: Success reponse
@@ -1340,7 +1352,165 @@ paths:
                   error:
                     type: string
 
+  /api/v1/notifications:
+    get:
+      summary: Retrieve notifications
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
 
+    post:
+      summary: Create a new notification
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationInput'
+      responses:
+        '201':
+          description: Notification created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+  
+  /api/v1/notifications/{id}:
+    get:
+      summary: Retrieve a specific notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+
+    put:
+      summary: Update a notification's read status
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationUpdate'
+      responses:
+        '200':
+          description: Notification updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+
+  /api/v1/users:
+    get:
+      summary: Retrieve users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    post:
+      summary: Create a new user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/v1/users/{id}:
+    get:
+      summary: Retrieve a specific user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      summary: Update a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+
+  
+   
 components:
   securitySchemes:
     bearerAuth:
@@ -1348,33 +1518,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 507f1f77bcf86cd799439011
-        email:
-          type: string
-          format: email
-          example: user@example.com
-        username:
-          type: string
-          example: johndoe
-        firstname:
-          type: string
-          example: John
-        lastname:
-          type: string
-          example: Doe
-        createdAt:
-          type: string
-          format: date-time
-          example: 2023-07-12T07:20:50.52Z
-        updatedAt:
-          type: string
-          format: date-time
-          example: 2023-07-12T07:20:50.52Z
+   
     Invites:
       type: object
       properties:
@@ -1411,6 +1555,112 @@ components:
                   type: string
                   format: date-time
                   example: '2024-07-13T15:30:00Z'
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        message:
+          type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        userId:
+          type: integer
+
+    NotificationInput:
+      type: object
+      required:
+        - message
+        - userId
+      properties:
+        message:
+          type: string
+        userId:
+          type: integer
+    NotificationUpdate:
+      type: object
+      required:
+        - isRead
+      properties:
+        isRead:
+          type: boolean
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        image:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        socialType:
+          type: string
+          enum: [facebook, google, twitter, apple]
+        socialId:
+          type: string
+
+    UserInput:
+      type: object
+      required:
+        - email
+        - username
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+          format: password
+        image:
+          type: string
+        socialType:
+          type: string
+          enum: [facebook, google, twitter, apple]
+        socialId:
+          type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        image:
+          type: string
     Transactions:
       type: object
       properties:
