@@ -490,8 +490,6 @@ paths:
           $ref: '#/components/responses/ServerError'
   
   /api/v1/invites/{inviteId}:
-    security:
-        - bearerAuth: []
     parameters:
       - name: inviteId
         in: path
@@ -504,6 +502,8 @@ paths:
       tags: 
         - Invites
       summary: Fetch single invite
+      security:
+        - bearerAuth: []
       operationId: fetchSingleInvite
       responses:
         '200': 
@@ -575,8 +575,6 @@ paths:
           $ref: '#/components/responses/ServerError'
   
   /api/v1/invites/{inviteId}/accept:
-    security:
-        - bearerAuth: []
     parameters:
       - name: inviteId
         in: path
@@ -589,6 +587,8 @@ paths:
       tags: 
         - Invites
       summary: Accept an invite
+      security:
+        - bearerAuth: []
       operationId: acceptSingleInvite
       responses: 
         '200':
